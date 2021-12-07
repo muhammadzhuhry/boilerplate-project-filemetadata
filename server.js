@@ -13,14 +13,12 @@ app.get('/', function (req, res) {
 });
 
 const upload = multer({ dest: "uploads/" });
-app.post("/api/fileanalyse", upload.single("upfile"), function(req, res, next) {
-  var upfile = req.file;
-  if (typeof upfile === "undefined") res.json({ error: "file not uploaded" });
-  return res.json({
-    name: upfile.originalname,
-    type: upfile.mimetype,
-    size: upfile.size
-  });
+app.post("/api/fileanalyse", upload.single("upfile"), (req, res) => {
+  if (!req.file) return res.json({ error: "Select a file to upload" });
+
+  const { originalname, mimetype, size } = req.file;
+
+  res.json({ name: originalname, type: mimetype, size: size });
 });
 
 const port = process.env.PORT || 3000;
